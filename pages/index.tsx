@@ -1,13 +1,11 @@
 import { useContext } from 'react'
 
 import { Layout } from '../components/layouts'
-import { UIContext } from '../context/ui'
 
 import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
 
 import { Card, CardContent, CardHeader, Grid, Typography } from '@mui/material'
+import { EntryList } from '../components/ui'
 
 
 
@@ -20,25 +18,28 @@ const HomePage: NextPage = () => {
           <Card sx={{
             height: "calc(100vh - 100px)"
           }}>
-            <CardHeader title="Pendientes" />
-
-            <CardContent>
-
-            </CardContent>
+            <CardHeader title="Pending" />
+            <EntryList status="pending" />
           </Card>
         </Grid>
+
         <Grid item xs={12} sm={4}>
           <Card sx={{
             height: "calc(100vh - 100px)"
           }}>
-            <CardHeader title="En Progreso" />
+            <CardHeader title="In progress" />
+            <EntryList status="in-progress" />
+
           </Card>
         </Grid>
+
         <Grid item xs={12} sm={4}>
           <Card sx={{
             height: "calc(100vh - 100px)"
           }}>
-            <CardHeader title="Completadas" />
+            <CardHeader title="Finished" />
+            <EntryList status="finished" />
+
           </Card>
         </Grid>
       </Grid>

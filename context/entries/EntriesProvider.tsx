@@ -14,19 +14,19 @@ const Entries_INITIALSTATE: EntriesState = {
   entries: [
     {
       _id: uuidv4(),
-      description: "EStasd dejnjnefjbrf snd skndsd ",
+      description: "Penditene  EStasd dejnjnefjbrf snd skndsd ",
       status: "pending",
       createdAt: Date.now()
     },
     {
       _id: uuidv4(),
-      description: "EStasd dejnjnefjbrf snd skndsd ",
+      description: "Progresooo  EStasd dejnjnefjbrf snd skndsd ",
       status: "in-progress",
       createdAt: Date.now()
     },
     {
       _id: uuidv4(),
-      description: "EStasd dejnjnefjbrf snd skndsd ",
+      description: "Finisihed   EStasd dejnjnefjbrf snd skndsd ",
       status: "finished",
       createdAt: Date.now()
     },
