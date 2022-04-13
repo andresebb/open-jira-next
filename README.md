@@ -18,3 +18,9 @@ mongodb://localhost:27017entriesdb
 ## Config env variables
 
 Rename the file **.env.template** to **.env**
+
+## fill the databse with test information
+
+```
+  "http://localhost:3000/api/seed
+```

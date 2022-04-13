@@ -11,26 +11,7 @@ export interface EntriesState {
 }
 
 const Entries_INITIALSTATE: EntriesState = {
-  entries: [
-    {
-      _id: uuidv4(),
-      description: "Penditene  EStasd dejnjnefjbrf snd skndsd ",
-      status: "pending",
-      createdAt: Date.now()
-    },
-    {
-      _id: uuidv4(),
-      description: "Progresooo  EStasd dejnjnefjbrf snd skndsd ",
-      status: "in-progress",
-      createdAt: Date.now()
-    },
-    {
-      _id: uuidv4(),
-      description: "Finisihed   EStasd dejnjnefjbrf snd skndsd ",
-      status: "finished",
-      createdAt: Date.now()
-    },
-  ]
+  entries: []
 }
 
 export const EntriesProvider: FC = ({ children }) => {
