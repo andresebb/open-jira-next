@@ -6,6 +6,8 @@ To run locally, you need the database
 docker-compose up -d
 ```
 
+Once created you need to go to docker desktop and start it
+
 **detached**
 
 ### MONGO COMPASS URL

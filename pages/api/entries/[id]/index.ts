@@ -1,8 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import mongoose from "mongoose";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../../database";
-import { Entry, IEntry } from "../../../models";
+import { db } from "../../../../database";
+import { Entry, IEntry } from "../../../../models";
 
 type Data = { message: string } | IEntry;
 
@@ -10,15 +10,19 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { id } = req.query;
+  //We use the middleware para este pedazo
 
-  if (!mongoose.isValidObjectId(id)) {
-    return res.status(400).json({ message: "Not valid ID" });
-  }
+  // const { id } = req.query;
+
+  // if (!mongoose.isValidObjectId(id)) {
+  //   return res.status(400).json({ message: "Not valid ID" });
+  // }
 
   switch (req.method) {
     case "PUT":
       return updateEntry(req, res);
+    case "GET":
+      return getEntryById(req, res);
     default:
       return res.status(400).json({ message: "Method does not exist" });
   }
@@ -32,6 +36,7 @@ const updateEntry = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const entryToUpdate = await Entry.findById(id);
 
   if (!entryToUpdate) {
+    await db.disconnect();
     return res
       .status(400)
       .json({ message: `There is no entry with that id  ${id}` });
@@ -55,4 +60,23 @@ const updateEntry = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     await db.disconnect();
     res.status(400).json({ message: error });
   }
+};
+
+const getEntryById = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  const { id } = req.query;
+
+  await db.connect();
+  const entry = await Entry.findById(id);
+  await db.disconnect();
+
+  if (!entry) {
+    return res
+      .status(400)
+      .json({ message: `There is no entry with that id  ${id}` });
+  }
+
+  return res.status(200).json(entry);
 };
