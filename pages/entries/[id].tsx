@@ -1,18 +1,27 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useMemo, FC } from 'react';
+import { GetServerSideProps } from 'next'
 import { Layout } from '../../components/layouts/Layout';
 import { capitalize, IconButton, Card, CardActions, Button, CardContent, CardHeader, Grid, TextField, FormControl, FormLabel, RadioGroup, Radio, FormControlLabel } from '@mui/material';
-import { EntryStatus } from '../../interfaces';
+import { Entry, EntryStatus } from '../../interfaces';
 import SaveIcon from '@mui/icons-material/SaveOutlined';
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
+import { dbEntries } from '../../database';
 
 const validStatus: EntryStatus[] = ["pending", "in-progress", "finished"]
 
+interface Props {
+  entry: Entry
+}
 
-const EntriesPage = () => {
+const EntriesPage: FC<Props> = ({ entry }) => {
 
-  const [inputValue, setInputValue] = useState("")
-  const [status, setStatus] = useState<EntryStatus>("pending");
+
+
+  const [inputValue, setInputValue] = useState(entry.description)
+  const [status, setStatus] = useState<EntryStatus>(entry.status);
   const [touched, setTouched] = useState(false)
+
+  const isNotValid = useMemo(() => inputValue.length <= 0 && touched, [inputValue, touched])
 
   const onTextFieldChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value)
@@ -27,7 +36,7 @@ const EntriesPage = () => {
   }
 
 
-  return <Layout title="....">
+  return <Layout title={inputValue.substring(0, 20) + "..."}>
     <Grid
       container
       justifyContent="center"
@@ -35,7 +44,7 @@ const EntriesPage = () => {
     >
       <Grid item xs={12} sm={8} md={6}>
         <Card>
-          <CardHeader title={`Entry: ${inputValue}`} subheader={`Creada hace tanto`} />
+          <CardHeader title={`Entry: `} subheader={`Created ${entry.createdAt}`} />
           <CardContent>
             <TextField
               sx={{ marginTop: 2, marginBottom: 1 }}
@@ -46,6 +55,9 @@ const EntriesPage = () => {
               label="New Entry"
               value={inputValue}
               onChange={onTextFieldChange}
+              helperText={isNotValid && "Enter a value"}
+              onBlur={() => setTouched(true)}
+              error={isNotValid}
             />
 
             <FormControl>
@@ -73,6 +85,7 @@ const EntriesPage = () => {
               variant="contained"
               fullWidth
               onClick={onSave}
+              disabled={inputValue.length <= 0}
             >
               Save
             </Button>
@@ -86,5 +99,31 @@ const EntriesPage = () => {
     </IconButton>
   </Layout>;
 }
+
+
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+
+  const { id } = params as { id: string }
+
+  const entry = await dbEntries.getEntryById(id)
+
+  if (!entry) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false
+      }
+    }
+  }
+
+  return {
+    props: {
+      entry: entry
+    }
+  }
+}
+
 
 export default EntriesPage
