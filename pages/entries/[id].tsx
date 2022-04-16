@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useMemo, FC } from 'react';
+import { useState, ChangeEvent, useMemo, FC, useContext } from 'react';
 import { GetServerSideProps } from 'next'
 import { Layout } from '../../components/layouts/Layout';
 import { capitalize, IconButton, Card, CardActions, Button, CardContent, CardHeader, Grid, TextField, FormControl, FormLabel, RadioGroup, Radio, FormControlLabel } from '@mui/material';
@@ -6,6 +6,9 @@ import { Entry, EntryStatus } from '../../interfaces';
 import SaveIcon from '@mui/icons-material/SaveOutlined';
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
 import { dbEntries } from '../../database';
+import { EntriesContext } from '../../context/entries';
+import { getFormatDistanceToNow } from '../../utils/dateFunctions';
+
 
 const validStatus: EntryStatus[] = ["pending", "in-progress", "finished"]
 
@@ -16,6 +19,7 @@ interface Props {
 const EntriesPage: FC<Props> = ({ entry }) => {
 
 
+  const { updateEntry, deleteEntry } = useContext(EntriesContext)
 
   const [inputValue, setInputValue] = useState(entry.description)
   const [status, setStatus] = useState<EntryStatus>(entry.status);
@@ -32,7 +36,15 @@ const EntriesPage: FC<Props> = ({ entry }) => {
   }
 
   const onSave = () => {
-    console.log("listo")
+    if (inputValue.trim().length === 0) return
+
+    const updatedEntry: Entry = {
+      ...entry,
+      status,
+      description: inputValue
+    }
+
+    updateEntry(updatedEntry, true)
   }
 
 
@@ -44,7 +56,7 @@ const EntriesPage: FC<Props> = ({ entry }) => {
     >
       <Grid item xs={12} sm={8} md={6}>
         <Card>
-          <CardHeader title={`Entry: `} subheader={`Created ${entry.createdAt}`} />
+          <CardHeader title={`Entry: `} subheader={`Created ${getFormatDistanceToNow(entry.createdAt)} ago`} />
           <CardContent>
             <TextField
               sx={{ marginTop: 2, marginBottom: 1 }}
@@ -94,7 +106,7 @@ const EntriesPage: FC<Props> = ({ entry }) => {
       </Grid>
     </Grid>
 
-    <IconButton sx={{ position: "fixed", bottom: 30, right: 30, backgroundColor: "error.dark" }}>
+    <IconButton sx={{ position: "fixed", bottom: 30, right: 30, backgroundColor: "error.dark" }} onClick={() => deleteEntry(entry._id)}>
       <DeleteIcon />
     </IconButton>
   </Layout>;

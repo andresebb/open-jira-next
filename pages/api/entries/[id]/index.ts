@@ -1,5 +1,4 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import mongoose from "mongoose";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../../database";
 import { Entry, IEntry } from "../../../../models";
@@ -23,6 +22,8 @@ export default function handler(
       return updateEntry(req, res);
     case "GET":
       return getEntryById(req, res);
+    case "DELETE":
+      return deleteEntry(req, res);
     default:
       return res.status(400).json({ message: "Method does not exist" });
   }
@@ -79,4 +80,21 @@ const getEntryById = async (
   }
 
   return res.status(200).json(entry);
+};
+
+const deleteEntry = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { id } = req.query;
+
+  await db.connect();
+  const entry = await Entry.deleteOne({ _id: id });
+  await db.disconnect();
+
+  if (!entry) {
+    await db.disconnect();
+    return res
+      .status(400)
+      .json({ message: `There is no entry with that id  ${id}` });
+  }
+
+  return res.status(200).json({ message: "Eliminado" });
 };

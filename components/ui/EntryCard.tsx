@@ -3,6 +3,7 @@ import { Card, CardActionArea, CardActions, CardContent, Typography } from '@mui
 import { Entry } from '../../interfaces'
 import { UIContext } from '../../context/ui'
 import { useRouter } from 'next/router'
+import { getFormatDistanceToNow } from '../../utils/dateFunctions';
 
 interface Props {
   entry: Entry
@@ -50,7 +51,7 @@ export const EntryCard: FC<Props> = ({ entry }) => {
         }}>
           <Typography
             variant="body2">
-            Hace 30 min
+            {getFormatDistanceToNow(entry.createdAt)}
           </Typography>
         </CardActions>
       </CardActionArea>
